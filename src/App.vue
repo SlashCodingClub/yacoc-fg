@@ -1,48 +1,41 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div class="grid grid-cols-12 grid-rows-6 h-screen gap-2 p-4 bg-gray-800 text-gray-200">
+    <!-- Enemy or Entity Info -->
+    <EnemyInfo class="col-span-4 row-span-2" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
+    <!-- Main Game Scene -->
+    <MainGameScene class="col-span-4 row-span-2" />
 
-  <main>
-    <h1 class="text-5xl font-bold underline">Hello world!</h1>
-    <TheWelcome />
-  </main>
+    <!-- Player Info -->
+    <PlayerInfo class="col-span-4 row-span-2" />
+
+    <!-- Dice and Total -->
+    <DiceSection class="col-span-2 row-span-2" />
+
+    <!-- Chat and Event Log -->
+    <ChatLog class="col-span-8 row-span-2" />
+
+    <!-- Skill and Items -->
+    <SkillAndItems class="col-span-2 row-span-2" />
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-}
+<script>
+import EnemyInfo from "./components/EnemyInfo.vue";
+import MainGameScene from "./components/MainGameScene.vue";
+import PlayerInfo from "./components/PlayerInfo.vue";
+import DiceSection from "./components/DiceSection.vue";
+import ChatLog from "./components/ChatLog.vue";
+import SkillAndItems from "./components/SkillAndItems.vue";
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
+export default {
+  components: {
+    EnemyInfo,
+    MainGameScene,
+    PlayerInfo,
+    DiceSection,
+    ChatLog,
+    SkillAndItems,
+  },
+};
+</script>
