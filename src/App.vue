@@ -13,10 +13,10 @@
     <DiceSection class="col-span-2 row-span-3" />
 
     <!-- Chat and Event Log -->
-    <ChatLog class="col-span-8 row-span-3" />
+    <ChatLog class="col-span-8 row-span-3" :selected="selected" @clear-selection="clearSelected" />
 
     <!-- Skill and Items -->
-    <SkillAndItems class="col-span-2 row-span-3" />
+    <SkillAndItems class="col-span-2 row-span-3" @select="updateSelection" />
   </div>
 </template>
 
@@ -47,6 +47,9 @@ export default {
   methods: {
     updateSelection(selection) {
       this.selected = selection // Update the selected entity
+    },
+    clearSelected() {
+      this.selected = null // Reset the selected item
     },
   },
 }
