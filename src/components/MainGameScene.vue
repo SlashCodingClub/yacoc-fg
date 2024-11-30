@@ -15,6 +15,7 @@
           <!-- Item Buttons -->
           <div v-for="(item, index) in items" :key="index" class="relative group">
             <button
+              @click="selectItem(item)"
               class="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-600"
             >
               <span class="text-2xl">{{ item.icon }}</span>
@@ -36,6 +37,7 @@
           <!-- NPC Buttons -->
           <div v-for="(npc, index) in npcs" :key="index" class="relative group">
             <button
+              @click="selectNpc(npc)"
               class="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-600"
             >
               <span class="text-2xl">{{ npc.icon }}</span>
@@ -58,11 +60,19 @@ export default {
   data() {
     return {
       items: [
-        { name: 'Box', icon: '📦' },
-        { name: 'Spider', icon: '🕷️' },
+        { name: 'Box', icon: '📦', description: 'A dusty old box.' },
+        { name: 'Spider', icon: '🕷️', description: 'A small but scary spider.' },
       ],
-      npcs: [{ name: 'Monkey NPC', icon: '🐵' }],
+      npcs: [{ name: 'Monkey NPC', icon: '🐵', description: 'A playful monkey NPC.' }],
     }
+  },
+  methods: {
+    selectItem(item) {
+      this.$emit('select', item) // Emit selected item to the parent
+    },
+    selectNpc(npc) {
+      this.$emit('select', npc) // Emit selected NPC to the parent
+    },
   },
 }
 </script>

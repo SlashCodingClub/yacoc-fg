@@ -1,10 +1,10 @@
 <template>
   <div class="grid grid-cols-12 grid-rows-6 h-screen gap-2 p-4 bg-gray-800 text-gray-200">
     <!-- Enemy or Entity Info -->
-    <EnemyInfo class="col-span-4 row-span-3" />
+    <EnemyInfo class="col-span-4 row-span-3" :selected="selected" />
 
     <!-- Main Game Scene -->
-    <MainGameScene class="col-span-4 row-span-3" />
+    <MainGameScene class="col-span-4 row-span-3" @select="updateSelection" />
 
     <!-- Player Info -->
     <PlayerInfo class="col-span-4 row-span-3" />
@@ -36,6 +36,18 @@ export default {
     DiceSection,
     ChatLog,
     SkillAndItems,
+  },
+
+  data() {
+    return {
+      selected: null, // Holds the current selected item or NPC
+    }
+  },
+
+  methods: {
+    updateSelection(selection) {
+      this.selected = selection // Update the selected entity
+    },
   },
 }
 </script>

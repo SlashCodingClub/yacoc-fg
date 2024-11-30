@@ -6,7 +6,7 @@
     </div>
     <div class="grid grid-cols-5 gap-2">
       <button
-        v-for="i in 40"
+        v-for="i in 30"
         :key="i"
         class="bg-gray-600 text-sm p-2 rounded border border-dashed border-gray-500"
       >
