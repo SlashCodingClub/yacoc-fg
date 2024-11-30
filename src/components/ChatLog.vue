@@ -3,7 +3,8 @@
     <!-- Chat Log -->
     <div class="flex-grow overflow-y-auto space-y-4 bg-gray-700 p-4 rounded">
       <div v-for="(log, index) in chatLogs" :key="index" class="text-sm">
-        <span class="font-bold">{{ log.sender }}:</span> {{ log.message }}
+        <!-- Display Sender and Receiver -->
+        <span class="font-bold">{{ log.sender }} → {{ log.receiver }}:</span> {{ log.message }}
       </div>
     </div>
 
@@ -12,7 +13,7 @@
       <!-- Selected Item Button -->
       <button
         v-if="selected"
-        @click="$emit('clear-selection')"
+        @click="clearSelected"
         class="flex items-center bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg space-x-2"
       >
         <span class="text-2xl">{{ selected.icon }}</span>
@@ -40,6 +41,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   props: {
     selected: {
@@ -49,15 +52,61 @@ export default {
   },
   data() {
     return {
-      chatLogs: [], // Array to hold chat log messages
-      message: '', // Current message in the input field
+      message: '',
+      chatLogs: [],
     }
   },
+  mounted() {
+    this.fetchRecentLogs()
+  },
   methods: {
-    sendMessage() {
+    async fetchRecentLogs() {
+      try {
+        // Calculate the timestamp 5 minutes ago
+        // const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
+
+        // Send GET request to fetch game logs from the last 5 minutes
+        // const response = await axios.get('http://localhost:3000/messages', {
+        //   params: {
+        //     start_time: fiveMinutesAgo, // Pass the timestamp as query parameter
+        //   },
+        // })
+        const response = await axios.get('http://localhost:3000/messages')
+
+        // Assuming response.data contains an array of logs
+        this.chatLogs = response.data
+      } catch (error) {
+        console.error('Error fetching recent logs:', error)
+      }
+    },
+
+    async sendMessage() {
       if (this.message.trim()) {
-        this.chatLogs.push({ sender: 'Player', message: this.message }) // Append to chat logs
-        this.message = '' // Clear input field
+        const timestamp = new Date().toISOString() // Get current timestamp
+        const receiver = this.selected ? this.selected.name : 'None'
+        const gameLog = {
+          sender: 'Hero_250', // Example player name, replace with dynamic data if necessary
+          receiver: receiver, // Selected item name as receiver
+          timestamp,
+          action_message: this.message.trim(), // Message from the input field
+        }
+        try {
+          // Send the message to the backend via POST request
+          await axios.post('http://localhost:3000/messages', { game_log: gameLog })
+
+          // If successful, push the message to the chat log
+          this.chatLogs.push({
+            sender: gameLog.sender,
+            receiver: gameLog.receiver, // Ensure the receiver is included in the log
+            timestamp: gameLog.timestamp, // Include timestamp
+            message: this.message,
+          })
+
+          this.message = '' // Clear input field
+        } catch (error) {
+          console.error('Error sending message to the backend:', error)
+          // Optionally handle the error (e.g., show a message to the user)
+        }
       }
     },
   },
