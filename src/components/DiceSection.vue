@@ -16,31 +16,58 @@
 import { ref } from 'vue'
 
 export default {
-  setup() {
-    const diceNumber = ref(1) // Current dice number
-    const isRolling = ref(false) // Flag to prevent multiple rolls
-    const total = ref(0) // Total value of dice rolls
+  props: {
+    min: {
+      type: Number,
+      default: 1, // Default minimum dice value
+    },
+    max: {
+      type: Number,
+      default: 20, // Default maximum dice value
+    },
+  },
+  setup(props) {
+    const diceNumber = ref(props.min) // Current dice number starts at the minimum
+    const isRolling = ref(false) // Prevent multiple rolls
+    const total = ref(0) // Store the final result
 
     const rollDice = () => {
       if (isRolling.value) return
 
       isRolling.value = true
-      const finalNumber = Math.floor(Math.random() * 20) + 1 // Generate random number (1-20)
-      let currentSpeed = 50 // Initial speed in milliseconds
-      let iterations = 0 // Track how many times the number has changed
 
-      const rollInterval = setInterval(() => {
-        diceNumber.value = Math.floor(Math.random() * 20) + 1
+      const finalNumber = Math.floor(Math.random() * (props.max - props.min + 1)) + props.min // Final result within bounds
+      let currentNumber = Math.floor(Math.random() * (props.max - props.min + 1)) + props.min // Initial random number
+      let iterations = 0 // Track iterations
+      let currentSpeed = 50 // Initial speed
+      let range = props.max - props.min // Start with full range
+
+      const roll = () => {
+        // Gradually reduce the range and move toward the finalNumber
+        if (iterations >= 10) {
+          diceNumber.value = finalNumber // Set final number
+          total.value = finalNumber
+          isRolling.value = false
+          return
+        }
+
+        // Generate a number closer to the final result
+        const direction = finalNumber > currentNumber ? 1 : -1 // Determine the direction
+        currentNumber += direction * Math.floor(Math.random() * Math.ceil(range / 4))
+
+        // Ensure the number stays within bounds
+        if (currentNumber > props.max) currentNumber = props.max
+        if (currentNumber < props.min) currentNumber = props.min
+
+        diceNumber.value = currentNumber
+        range = Math.max(1, range - 2) // Narrow down the range
+        currentSpeed += 20 // Slow down the speed
 
         iterations++
-        currentSpeed += 20 // Gradually slow down the speed
-        if (iterations >= 10) {
-          clearInterval(rollInterval)
-          diceNumber.value = finalNumber // Set the final dice number
-          isRolling.value = false
-          total.value = finalNumber
-        }
-      }, currentSpeed)
+        setTimeout(roll, currentSpeed)
+      }
+
+      roll() // Start the dice roll
     }
 
     return {
@@ -54,7 +81,6 @@ export default {
 </script>
 
 <style>
-/* Optional: Add custom styles for dice animation */
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
